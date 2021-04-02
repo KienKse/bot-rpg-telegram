@@ -2,9 +2,12 @@ const TelegramBot = require( `node-telegram-bot-api` );
 const { performance } = require('perf_hooks');
 const request = require('request');
 
+require("dotenv").config();
+
 const PREFIX = '/';
 
-const TOKEN = `1628083641:AAGzgxkubCo4Z6ExCJbL1wT1Q5ByeB1gcvM`;
+console.log("\nTOKEN: ", process.env.TOKEN,"\n")
+const TOKEN = process.env.TOKEN;
 const bot = new TelegramBot( TOKEN, { polling: true } );
 
 var start;
