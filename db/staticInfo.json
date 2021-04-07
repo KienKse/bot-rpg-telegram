@@ -1,0 +1,35 @@
+{
+  "Breed" : [
+    "Humano",
+    "Elfo",
+    "anão",
+    "duende",
+    "Goblin",
+    "Elfo",
+    "Orc",
+    "Gigante",
+    "Khajit",
+    "Fada",
+    "Furry",
+    "Gabirú",
+    "Drows",
+    "Sátiro/Fauno"
+  ],
+  "Class" : [
+    "Ladino",
+    "Mago",
+    "Ranger",
+    "Clérigo",
+    "feiticeiro",
+    "druida",
+    "arqueiro",
+    "paladino",
+    "Lutador",
+    "Espadachin",
+    "Ninja",
+    "Monge",
+    "Lutador",
+    "Psionico",
+    "Alquimista"
+  ]
+}
