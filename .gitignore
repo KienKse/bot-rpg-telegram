@@ -14,6 +14,9 @@ lerna-debug.log*
 .env
 launch.json
 
+# Test Files
+test.js
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
