@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
 
-var Singleton = (() => {
+var singletonBot = (() => {
   var instance;
 
   function createInstance() {
@@ -18,4 +18,4 @@ var Singleton = (() => {
   };
 })();
 
-module.exports = Singleton.getInstance();
+module.exports = singletonBot.getInstance();
