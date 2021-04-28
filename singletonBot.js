@@ -8,7 +8,7 @@ var singletonBot = (() => {
   var instance;
 
   function createInstance() {
-    let bot = new TelegramBot( TOKEN, { polling: true, webHook: { port: PORT }});
+    let bot = new TelegramBot( TOKEN, { webHook: { port: PORT }});
       return bot;
   }
 
