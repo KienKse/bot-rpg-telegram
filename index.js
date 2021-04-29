@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { performance } = require('perf_hooks');
 const request = require('request');
 const bot = require('./singletonBot');
@@ -211,3 +212,5 @@ function formatCharacterOutPut(character) {
   Raça: ${character._breed}
   Classe:  ${character._class}`;
 }
+
+require('./web')(bot);

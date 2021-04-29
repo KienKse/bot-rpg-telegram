@@ -4,12 +4,14 @@
   "description": "A bot to play RPG by Telegram",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "mongodb": "^3.6.6",
     "mongoose": "^5.12.3",
     "node-telegram-bot-api": "^0.52.0"

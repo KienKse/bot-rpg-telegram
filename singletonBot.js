@@ -1,14 +1,21 @@
 const TelegramBot = require( `node-telegram-bot-api` );
-require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
+const ENVIRONMENT = process.env.ENVIRONMENT;
 
 var singletonBot = (() => {
   var instance;
-
   function createInstance() {
-    let bot = new TelegramBot( TOKEN, { polling: true } );
-      return bot;
+    let bot;
+    if(ENVIRONMENT == 'PROD') {
+      bot = new TelegramBot(TOKEN);
+      bot.setWebHook(process.env.HEROKU_URL + bot.token);
+    } else {
+      bot = new TelegramBot( TOKEN, { polling: true});
+    }
+    console.log(`ENVIRONMENT: ${ENVIRONMENT}`);
+    console.log(`POLLING: ${bot.options.polling}`);
+    return bot;
   }
 
   return {

@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
-require("dotenv").config();
 
 const URI = process.env.URI;
+
 const client = new MongoClient(URI);
 
 async function main() {
