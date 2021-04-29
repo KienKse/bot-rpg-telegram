@@ -1,5 +1,5 @@
 const TelegramBot = require( `node-telegram-bot-api` );
-require("dotenv").config();
+// require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
 const PORT = process.env.PORT || 5000;
