@@ -4,26 +4,52 @@ const request = require('request');
 const bot = require('./singletonBot');
 const staticInfo = require('./db/staticInfo.json');
 
-const { getUser, createUser, deleteUser } = require("./db/database");
+const MongoDb = require('./db/database');
+const database = new MongoDb();
 
 var fs = require('fs');
 const Player = require('./src/model/player');
-var criticalFiles = fs.readdirSync('./assets/sticker/critical');
-var criticalFailFiles = fs.readdirSync('./assets/sticker/criticalFail');
+const criticalFiles = fs.readdirSync('./assets/sticker/critical');
+const criticalFailFiles = fs.readdirSync('./assets/sticker/criticalFail');
 
 const PREFIX = '/';
 const criticDice = 20;
 const missDice = 1;
-const signature = 'Requested by: @';
-const criticResult = 'Acerto Crítico! @';
-const faliureCriticResult = 'Falha Crítica! @';
+const signature = 'Requested by user id:';
+const criticResult = '!!Acerto Crítico!!\nUser id: ';
+const faliureCriticResult = '!!!Falha Crítica!!!\nUser id: ';
 
-bot.onText(/\/(ra(c|ç)a|classe)/, (message) => {
-  bot.sendMessage(chatId(message), 'O comando foi alterado para\n/personagem ou /generate seguido do nome do personagem');
+const ADMIN = {
+  id: 1496978755,
+  username: 'kienkse',
+}
+
+bot.onText(/\/(personagem|generate) \w+/, async (message) => {
+  let nomeChar = message.text.replace(/\/(personagem|generate) /,"");
+  let idUser = message.from.id;
+
+  let player = await database.playerDb.getUser(idUser);
+  if(player) {
+    bot.sendMessage(chatId(message), "Personagem encontrado!");
+  } else {
+    player = new Player(
+      idUser,
+      nomeChar,
+      await database.classDb.getRandomClass(),
+      await database.breedDb.getRandomBreed(),
+      null
+    );
+
+    await database.playerDb.createUser(player);
+
+    await bot.sendMessage(chatId(message), pickARandomStringFromList(staticInfo.NewMessagesAdventures));
+  }
+
+  bot.sendMessage(chatId(message), formatCharacterOutPut(player), replyToSender(message));
 });
 
 bot.onText(/\/info personagem/, async (message) => {
-  let player = await getUser(message.from.username);
+  let player = await database.playerDb.getUser(message.from.id);
   if(player) {
     bot.sendMessage(chatId(message), formatCharacterOutPut(player));
   } else {
@@ -31,39 +57,114 @@ bot.onText(/\/info personagem/, async (message) => {
   }
 });
 
-bot.onText(/\/deletePersonagem @\w+/, async (message) => {
-  if(message.from.username == "kienkse") {
-    let userName = message.text.replace(/\/deletePersonagem @/,"");
-    let player = await deleteUser(userName);
+bot.onText(/\/deletePersonagem \d+/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let idUser = message.text.replace(/\/deletePersonagem /,"");
+    let player = await database.playerDb.deleteUser(idUser);
     if(player) {
       bot.sendMessage(chatId(message), "Personagem deletado com sucesso!");
     } else {
       bot.sendMessage(chatId(message), "Não encontrei o usuário!");
     }
-  }
-});
-
-bot.onText(/\/(personagem|generate) \w+/, async (message) => {
-  let nomeChar = message.text.replace(/\/(personagem|generate) /,"");
-  let player = await getUser(message.from.username);
-  if(player) {
-    bot.sendMessage(chatId(message), "Personagem encontrado!");
   } else {
-
-    player = new Player(
-      message.from.username,
-      nomeChar, 
-      pickARandomStringFromList(staticInfo.Class), 
-      pickARandomStringFromList(staticInfo.Breed)
-      );
-
-    await createUser(player);
-
-    await bot.sendMessage(chatId(message), pickARandomStringFromList(staticInfo.NewMessagesAdventures));
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
   }
-
-  bot.sendMessage(chatId(message), formatCharacterOutPut(player));
 });
+
+/* CLASSES */
+
+bot.onText(/\/add classe \w+.*/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let _class = message.text.replace(/\/add classe /,"");
+    await verifyAndAddClass(message, _class);
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/add classes \w+.*/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let classes = message.text.replace(/\/add classes /,"");
+    classes = classes.split(" ");
+    classes.forEach(_class => {
+      verifyAndAddClass(message, _class);
+    });
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/delete classes/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    database.classDb.removeAllClasses();
+    bot.sendMessage(chatId(message), "Classes removidas com sucesso!");
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/allClasses/, async (message) => {
+    let teste = await database.classDb.getAllClasses();
+    await printListByElementObject(message, teste, '_class');
+});
+
+
+bot.onText(/\/classe aleatoria/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let randomClass = await database.classDb.getRandomClass();
+    bot.sendMessage(chatId(message), randomClass);
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+/* BREED */
+
+bot.onText(/\/add ra(c|ç)a \w+.*/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let breed = message.text.replace(/\/add ra(c|ç)a /,"");
+    await verifyAndAddBreed(message, breed);
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/add ra(c|ç)as/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let breeds = message.text.replace(/\/add ra(c|ç)as /,"");
+    breeds = breeds.split(" ");
+    breeds.forEach(breed => {
+      verifyAndAddBreed(message, breed);
+    });
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/delete ra(c|ç)as/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    database.breedDb.removeAllBreeds();
+    bot.sendMessage(chatId(message), "Raças removidas com sucesso!");
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+bot.onText(/\/allRa(c|ç)as/, async (message) => {
+  let teste = await database.breedDb.getAllBreeds();
+  await printListByElementObject(message, teste, 'breed');
+});
+
+bot.onText(/\/ra(c|ç)a aleatoria/, async (message) => {
+  if(verifyAdminAcess(message.from)) {
+    let randomBreed = await database.breedDb.getRandomBreed();
+    bot.sendMessage(chatId(message), randomBreed);
+  } else {
+    bot.sendMessage(chatId(message), "Você não tem permissão!");
+  }
+});
+
+/* OTHERS */
 
 bot.onText(/\/ping/, (message) => {
   var start = performance.now()
@@ -148,8 +249,38 @@ bot.onText(/\/audio/, function onAudioText(message) {
   bot.sendAudio(message.chat.id, audio);
 });
 
-const chatId = (message) => {
-  return message.chat.id;
+
+/* HELPER */
+
+async function printListByElementObject(message, list, element) {
+  let formatedList = [];
+  list.toArray((err, items) => {
+    items.forEach(item => {
+      formatedList.push(item[element]);
+    });
+    let result = formatedList.join([separador = ', ']);
+    if(result) {
+      bot.sendMessage(chatId(message), result);
+    } else {
+      bot.sendMessage(chatId(message), "Ué... não encontrei nenhum resultado por aqui!");
+    }
+  });
+}
+
+async function verifyAndAddClass(message, _class) {
+    await database.classDb.createClass(_class).then(() => {
+      bot.sendMessage(chatId(message), `Classe ${_class} inserida com sucesso com sucesso!`);
+    }).catch(() => {
+      bot.sendMessage(chatId(message), `Eu acho que já tenho noção sobre a classe ${_class}!`);
+    });
+}
+
+async function verifyAndAddBreed(message, breed) {
+  await database.breedDb.createBreed(breed).then(() => {
+    bot.sendMessage(chatId(message), `Raça ${breed} inserida com sucesso com sucesso!`);
+  }).catch(() => {
+    bot.sendMessage(chatId(message), `Eu acho que já tenho noção sobre a raça ${breed}!`);
+  });
 }
 
 function validIndexCritic(index, message) {
@@ -184,7 +315,7 @@ function randomIntFromInterval(min, max) {
 }
 
 function imageSignature(signature, message) {
-  return { caption: `${signature}${message.from.username}` };
+  return { caption: `${signature}${message.from.id} -> ${message.from.first_name}` };
 }
 
 function verifyCritic(sideNumber, result) {
@@ -199,18 +330,26 @@ function verifyCritic(sideNumber, result) {
 }
 
 function replyToSender(message) {
-  return {reply_to_message_id: message.message_id};
+  return { reply_to_message_id: message.message_id };
 }
 
 function pickARandomStringFromList(list) {
-  return list[randomIntFromInterval(0, list.length)].toUpperCase();
+  return list[randomIntFromInterval(0, list.length)];
 }
 
 function formatCharacterOutPut(character) {
-  return `@${character._username}:
-  Nome: ${character._charName}
-  Raça: ${character._breed}
-  Classe:  ${character._class}`;
+  return `Nome: ${character._charName} | Raça: ${character._breed} | Classe: ${character._class}`;
+}
+
+function verifyAdminAcess(user) {
+  if(user.id == ADMIN.id && user.username == ADMIN.username) {
+    return true;
+  }
+  return false;
+}
+
+const chatId = (message) => {
+  return message.chat.id;
 }
 
 require('./web')(bot);
