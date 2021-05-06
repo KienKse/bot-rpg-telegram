@@ -20,8 +20,8 @@ const criticResult = '!!Acerto Crítico!!\nUser id: ';
 const faliureCriticResult = '!!!Falha Crítica!!!\nUser id: ';
 
 const ADMIN = {
-  id: 1496978755,
-  username: 'kienkse',
+  id: process.env.ID_ADMIN,
+  username: process.env.USERNAME_ADMIN
 }
 
 bot.onText(/\/(personagem|generate) \w+/, async (message) => {
@@ -242,13 +242,6 @@ bot.onText(/\/sticker/, function onPhotoText(message) {
       break;
   }
 });
-
-bot.onText(/\/audio/, function onAudioText(message) {
-  const url = 'https://freesound.org/data/previews/391/391552_3268195-lq.mp3';
-  const audio = request(url);
-  bot.sendAudio(message.chat.id, audio);
-});
-
 
 /* HELPER */
 
