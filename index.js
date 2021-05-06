@@ -112,7 +112,7 @@ bot.onText(/\/delete classes/, async (message) => {
 
 bot.onText(/\/allClasses/, async (message) => {
     let teste = await database.classDb.getAllClasses();
-    await printListByElementObject(message, teste, '_class');
+    await helperService.printListByElementObject(message, teste, '_class');
 });
 
 
@@ -159,7 +159,7 @@ bot.onText(/\/delete ra(c|ç)as/, async (message) => {
 
 bot.onText(/\/allRa(c|ç)as/, async (message) => {
   let teste = await database.breedDb.getAllBreeds();
-  await printListByElementObject(message, teste, 'breed');
+  await helperService.printListByElementObject(message, teste, 'breed');
 });
 
 bot.onText(/\/ra(c|ç)a aleatoria/, async (message) => {
