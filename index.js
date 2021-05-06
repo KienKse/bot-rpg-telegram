@@ -205,7 +205,7 @@ bot.onText(/\/r (\d+)d(\d+)/, (message) => {
 
   helperService.validIndexCritic(criticIndexs, message);
 
-  bot.sendMessage(chatId(message), helperService.formatDiceOutPut(writedOutPut, result), replyToSender(message));
+  bot.sendMessage(chatId(message), helperService.formatDiceOutPut(writedOutPut, result), helperService.replyToSender(message));
 });
 
 bot.onText(/\/delete (\d)/, (message) => {
