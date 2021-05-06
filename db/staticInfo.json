@@ -1,37 +1,4 @@
 {
-  "Breed" : [
-    "Humano",
-    "Elfo",
-    "anão",
-    "duende",
-    "Goblin",
-    "Elfo",
-    "Orc",
-    "Gigante",
-    "Khajit",
-    "Fada",
-    "Furry",
-    "Gabirú",
-    "Drows",
-    "Sátiro/Fauno"
-  ],
-  "Class" : [
-    "Ladino",
-    "Mago",
-    "Ranger",
-    "Clérigo",
-    "feiticeiro",
-    "druida",
-    "arqueiro",
-    "paladino",
-    "Lutador",
-    "Espadachin",
-    "Ninja",
-    "Monge",
-    "Lutador",
-    "Psionico",
-    "Alquimista"
-  ],
   "NewMessagesAdventures": [
     "Há algo de bom neste mundo e vale a pena lutar por isso. [Sam]",
     "Apenas os mortos verão o fim da guerra. [Platao]",
