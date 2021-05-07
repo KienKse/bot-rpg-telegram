@@ -1,10 +1,8 @@
-/* HELPER */
 const bot = require('../singletonBot');
-
 var fs = require('fs');
 
-const CRITICAL_FILES_PATH = '../assets/sticker/critical/';
-const CRITICAL_FAIL_FILES_PATH = '../assets/sticker/criticalFail/';
+const CRITICAL_FILES_PATH = './assets/sticker/critical';
+const CRITICAL_FAIL_FILES_PATH = './assets/sticker/criticalFail';
 
 const criticalFiles = fs.readdirSync(CRITICAL_FILES_PATH);
 const criticalFailFiles = fs.readdirSync(CRITICAL_FAIL_FILES_PATH);
@@ -18,10 +16,6 @@ const ADMIN = {
   id: process.env.ID_ADMIN,
   username: process.env.USERNAME_ADMIN
 }
-function performPath() {
-  console.log(navigator.appVersion)
-}
-performPath();
 
 const helperService = {
   async printListByElementObject(message, list, element) {
@@ -139,7 +133,8 @@ const helperService = {
   },
   chatId(message) {
     return message.chat.id;
-  }
+  },
+  CRITICAL_FILES_PATH
 };
 
 module.exports = helperService;
