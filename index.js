@@ -196,19 +196,6 @@ bot.onText(/\/r (\d+)d(\d+)/, (message) => {
   bot.sendMessage(helperService.chatId(message), helperService.formatDiceOutPut(writedOutPut, result), helperService.replyToSender(message));
 });
 
-bot.onText(/\/delete (\d)/, (message) => {
-  let cont = message.text.split(" ")[1];
-  while(cont != 0) {
-        bot.deleteMessage(chatId, message.message_id-cont)
-        .catch( () => {
-          console.log(`No messages found with id ${message.message_id-cont}`);
-          cont--;
-        });
-        cont--;
-  }
-  bot.deleteMessage(helperService.chatId(message), message.message_id);
-});
-
 bot.onText(/\/start/, function onPhotoText(message) {
   // From file path
   const photo = './assets/sticker/greetings.gif';
