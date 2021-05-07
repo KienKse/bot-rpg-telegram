@@ -133,8 +133,7 @@ const helperService = {
   },
   chatId(message) {
     return message.chat.id;
-  },
-  CRITICAL_FILES_PATH
+  }
 };
 
 module.exports = helperService;
