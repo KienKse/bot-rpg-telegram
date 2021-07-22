@@ -1,8 +1,8 @@
 const bot = require('../singletonBot');
 var fs = require('fs');
 
-const CRITICAL_FILES_PATH = './assets/sticker/critical';
-const CRITICAL_FAIL_FILES_PATH = './assets/sticker/criticalFail';
+const CRITICAL_FILES_PATH = '../assets/sticker/critical';
+const CRITICAL_FAIL_FILES_PATH = '../assets/sticker/criticalFail';
 
 const criticalFiles = fs.readdirSync(CRITICAL_FILES_PATH);
 const criticalFailFiles = fs.readdirSync(CRITICAL_FAIL_FILES_PATH);
