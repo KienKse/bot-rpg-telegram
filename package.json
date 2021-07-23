@@ -1,6 +1,6 @@
 {
   "name": "bot-rpg-telegram",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A bot to play RPG by Telegram",
   "main": "index.js",
   "scripts": {
