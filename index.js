@@ -178,20 +178,15 @@ bot.onText(/\/r (\d+)d(\d+)/, (message) => {
 
   let rollInfo = helperService.removeBar(message.text).split('d');
   let sortedDices = [];
-  const sideNumber = rollInfo[1];
-  let criticIndexs = 0;
 
   while(rollInfo[0] != 0) {
-    let result = helperService.randomIntFromInterval(1, sideNumber);
-    criticIndexs += helperService.verifyCritic(sideNumber, result);
+    let result = helperService.randomIntFromInterval(1, rollInfo[1]);
     sortedDices.push(result);
     rollInfo[0]--;
   }
 
   const writedOutPut = `${sortedDices.join(' + ')}`;
   const result = `${eval(sortedDices.join('+'))}`;
-
-  helperService.validIndexCritic(criticIndexs, message);
 
   bot.sendMessage(helperService.chatId(message), helperService.formatDiceOutPut(writedOutPut, result), helperService.replyToSender(message));
 });
